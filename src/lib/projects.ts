@@ -89,6 +89,8 @@ export interface ProjectData {
   /** Card thumbnail — path relative to /public */
   image: string;
   size: "large" | "medium" | "small";
+  /** How screenshots are framed — "web" (browser chrome) or "app" (phone mockup). Defaults to "web". */
+  displayType?: "web" | "app";
   liveUrl?: string;
   githubUrl?: string;
 
@@ -667,11 +669,12 @@ export const projects: ProjectData[] = [
     title: "AI Grocery Assistant",
     subtitle: "Smart Shopping App",
     description:
-      "A machine learning powered app that scans recipes and recipe content to predict expiration dates and suggest recipes based on available ingredients.",
+      "A multi-functional application designed to optimize the shopping experience. It integrates budget tracking and health management with an AI-powered assistant to provide personalized recommendations, history logging, and efficient list management.",
     category: "MOBILE / AI",
     tags: ["Kotlin", "Firebase", "Jetpack Compose"],
-    image: "/images/project/cafe/1.png",
+    image: "/images/project/grocery/1.png",
     size: "small",
+    displayType: "app",
 
     content: [
       {
@@ -680,7 +683,7 @@ export const projects: ProjectData[] = [
       },
       {
         type: "paragraph",
-        text: "Taiwanese households waste an estimated 3.7 million tons of food annually. The root cause: people forget what's in their fridge, don't track expiration dates, and default to buying new ingredients instead of using what they have.",
+        text: "While the current build features budget and health management, the core focus of our ongoing development is an advanced in-store navigation component. As project lead, I am overseeing the implementation of this system to finalize the application’s primary feature set.",
       },
       {
         type: "heading",
@@ -688,7 +691,7 @@ export const projects: ProjectData[] = [
       },
       {
         type: "paragraph",
-        text: "Lead mobile developer in a 2-person team. I built the Kotlin/Jetpack Compose app, integrated the camera-based receipt scanner, trained the expiration prediction model, and designed the recipe recommendation algorithm.",
+        text: "Acting as Project Lead for my final degree project, I am directing the ongoing design and implementation of a five-module grocery assistant. Key features include OpenAI-powered assistance and real-time budget tracking. I am currently leading the team through iterative updates and feature expansions.",
       },
       {
         type: "bullets",
@@ -714,22 +717,22 @@ export const projects: ProjectData[] = [
               "ML model predicts expiration dates based on product type, storage conditions, and purchase date.",
           },
           {
-            title: "Recipe Suggestions",
+            title: "Health Management Module",
             description:
-              "Recommends recipes that prioritize ingredients closest to expiration, reducing food waste.",
+              "An intelligent health tracking system that analyzes user caloric intake to provide personalized exercise recommendations. By fetching and processing daily nutritional data, the module dynamically suggests activities designed to help users maintain their fitness goals",
           },
         ],
       },
       {
         type: "callout",
         variant: "warning",
-        title: "Challenge: Accurate Prediction from Minimal Input",
-        text: "Receipts only contain product names and purchase dates—not storage conditions or packaging type. The initial model predicted expiration dates with only 60% accuracy.",
+        title: "The Challenge: OCR & Data Normalization",
+        text: "Because receipt formats vary significantly across retailers, a major technical hurdle was ensuring the OCR (Optical Character Recognition) system could accurately identify and extract relevant data. We focused on refining the parsing logic to consistently capture line items and totals regardless of the layout.",
       },
       {
         type: "callout",
         variant: "success",
-        title: "Resolution",
+        title: "Tech Stack & Tools",
         text: "Added a user-feedback loop: after the initial prediction, the app asks 'Where will you store this?' (fridge, freezer, or pantry). This one input improved accuracy to 87%. Over time, the model learns per-user habits and stops asking.",
       },
       {
@@ -740,14 +743,40 @@ export const projects: ProjectData[] = [
       },
     ],
 
-    screenshots: [],
+    screenshots: [
+      {
+        src: "/images/project/grocery/1.png",
+        alt: "Login screen with email and password fields",
+        caption: "Welcome back — clean login screen with email and password authentication",
+      },
+      {
+        src: "/images/project/grocery/2.png",
+        alt: "Shopping list with grocery items and quantity controls",
+        caption: "Shopping list with auto-populated items from receipt scanning and expiration tracking",
+      },
+      {
+        src: "/images/project/grocery/3.png",
+        alt: "Add food record screen with nutrition and calorie tracking",
+        caption: "Add food records with nutrition info, calorie calculation, and exercise equivalents",
+      },
+      {
+        src: "/images/project/grocery/4.png",
+        alt: "Budget overview with spending breakdown by category",
+        caption: "Monthly budget tracker with category-level spending breakdown and overspend alerts",
+      },
+      {
+        src: "/images/project/grocery/5.png",
+        alt: "AI shopping assistant chat powered by Groq",
+        caption: "AI-powered shopping assistant for analyzing grocery lists and answering questions",
+      },
+    ],
 
     skills: [
       { name: "Kotlin", category: "Mobile", icon: "/images/skills/kotlin.png" },
       { name: "Firebase", category: "Backend", icon: "/images/skills/firebase.png" },
       { name: "Android Studio", category: "Tools", icon: "/images/skills/android-studio.png" },
       { name: "Python", category: "Data", icon: "/images/skills/python.png" },
-      { name: "Figma", category: "Tools", icon: "/images/skills/figma.png" },
+      { name: "Claude", category: "Tools", icon: "/images/skills/claude.png" },
     ],
 
     techStack: [

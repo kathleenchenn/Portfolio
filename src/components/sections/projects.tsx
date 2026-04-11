@@ -194,6 +194,7 @@ function ScreenshotGallery({ project }: { project: ProjectData }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const screenshots = project.screenshots;
   const prefersReducedMotion = useReducedMotion();
+  const isApp = project.displayType === "app";
 
   const goTo = useCallback(
     (index: number) => {
@@ -209,6 +210,115 @@ function ScreenshotGallery({ project }: { project: ProjectData }) {
   }, [project.id]);
 
   if (screenshots.length === 0) return null;
+
+  if (isApp) {
+    return (
+      <div>
+        <SectionLabel>Screenshots</SectionLabel>
+        <h3 className="font-[family-name:var(--font-heading)] font-bold text-[24px] text-white mb-8">
+          App Screens
+        </h3>
+
+        {/* Phone mockup carousel */}
+        <div className="flex flex-col items-center">
+          {/* Phone frame */}
+          <div className="relative w-[280px] sm:w-[300px]">
+            <div className="rounded-[40px] border-[3px] border-[rgba(255,255,255,0.12)] bg-[rgba(0,0,0,0.6)] p-[6px] shadow-[0_0_60px_rgba(0,0,0,0.4)]">
+              {/* Notch */}
+              <div className="absolute top-[6px] left-1/2 -translate-x-1/2 w-[80px] h-[22px] bg-black rounded-b-[14px] z-10" />
+
+              {/* Screen */}
+              <div className="relative rounded-[34px] overflow-hidden bg-black aspect-[9/19.5]">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={`${project.id}-${activeIndex}`}
+                    src={screenshots[activeIndex].src}
+                    alt={screenshots[activeIndex].alt}
+                    className="w-full h-full object-cover"
+                    initial={prefersReducedMotion ? false : { opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                    transition={{ duration: 0.25, ease: EASE_OUT_QUART }}
+                    loading="lazy"
+                  />
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Nav arrows — outside the phone */}
+            {screenshots.length > 1 && (
+              <>
+                <button
+                  onClick={() => goTo(activeIndex - 1)}
+                  className="absolute -left-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[rgba(0,0,0,0.5)] backdrop-blur-sm border border-[var(--color-border-subtle)] flex items-center justify-center text-white hover:bg-[rgba(0,0,0,0.7)] transition-colors"
+                  aria-label="Previous screenshot"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+                <button
+                  onClick={() => goTo(activeIndex + 1)}
+                  className="absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[rgba(0,0,0,0.5)] backdrop-blur-sm border border-[var(--color-border-subtle)] flex items-center justify-center text-white hover:bg-[rgba(0,0,0,0.7)] transition-colors"
+                  aria-label="Next screenshot"
+                >
+                  <ChevronRight size={18} />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Caption */}
+          {screenshots[activeIndex].caption && (
+            <p className="mt-5 font-[family-name:var(--font-body)] text-[13px] text-[var(--color-text-secondary)] text-center max-w-[400px]">
+              {screenshots[activeIndex].caption}
+            </p>
+          )}
+
+          {/* Dot indicators */}
+          {screenshots.length > 1 && (
+            <div className="flex gap-2 mt-5">
+              {screenshots.map((shot, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveIndex(i)}
+                  className={`w-[8px] h-[8px] rounded-full transition-all duration-200 ${
+                    i === activeIndex
+                      ? "bg-[var(--color-accent)] w-[24px]"
+                      : "bg-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.4)]"
+                  }`}
+                  aria-label={`View screenshot ${i + 1}: ${shot.alt}`}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Thumbnail strip — phone-shaped thumbnails */}
+          {screenshots.length > 1 && (
+            <div className="flex gap-3 mt-6">
+              {screenshots.map((shot, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveIndex(i)}
+                  className={`relative w-[48px] aspect-[9/19.5] rounded-[10px] overflow-hidden border-2 transition-[border-color,opacity] duration-200 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+                    i === activeIndex
+                      ? "border-[var(--color-accent-muted)] opacity-100"
+                      : "border-transparent opacity-40 hover:opacity-70"
+                  }`}
+                  aria-label={`View screenshot ${i + 1}: ${shot.alt}`}
+                >
+                  <img
+                    src={shot.src}
+                    alt=""
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
