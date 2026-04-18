@@ -752,12 +752,12 @@ export const projects: ProjectData[] = [
       {
         src: "/images/project/grocery/2.png",
         alt: "Shopping list with grocery items and quantity controls",
-        caption: "Shopping list with auto-populated items from receipt scanning and expiration tracking",
+        caption: "Shopping Homepage",
       },
       {
         src: "/images/project/grocery/3.png",
         alt: "Add food record screen with nutrition and calorie tracking",
-        caption: "Add food records with nutrition info, calorie calculation, and exercise equivalents",
+        caption: "Nearest Grocery Store location detection",
       },
       {
         src: "/images/project/grocery/4.png",
