@@ -352,7 +352,7 @@ function ScreenshotGallery({ project }: { project: ProjectData }) {
               key={`${project.id}-${activeIndex}`}
               src={screenshots[activeIndex].src}
               alt={screenshots[activeIndex].alt}
-              className="w-full h-full object-cover object-top"
+              className="absolute inset-0 w-full h-full object-contain"
               initial={prefersReducedMotion ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0 }}
