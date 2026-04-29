@@ -560,18 +560,18 @@ export const projects: ProjectData[] = [
     ],
   },
 
-  // ── 5. Momo Scraper ─────────────────────────────
+  // ── 5. Momo Price Tracker ───────────────────────
   {
-    id: "momoscm",
-    title: "E-Commerce Backend Scraper",
-    subtitle: "Momo Shopping Scraper",
+    id: "web-momo",
+    title: "Momo Price Tracker",
+    subtitle: "輝葉 HUEI YEH — Daily Price Dashboard",
     description:
-      "A hybrid scraping tool that combines lightweight HTML parsing with Playwright-driven browser automation to bypass sophisticated anti-bot protections on the Momo shopping platform.",
-    category: "AUTOMATION",
-    tags: ["React", "Vite", "Python", "Playwright"],
-    image: "/images/project/momo-scraper/1.png",
+      "A Flask + Playwright web app that scrapes daily prices for HUEI YEH massage products on momoshop.com.tw, stores them in SQLite, and visualizes price history with live sparklines and inline SVG charts.",
+    category: "AUTOMATION / DASHBOARD",
+    tags: ["Flask", "Playwright", "SQLite"],
+    image: "/images/project/web-momo/1.jpg",
     size: "small",
-    githubUrl: "https://github.com/kathleenchenn/WebScraper",
+    githubUrl: "https://github.com/kathleenchenn/Web-Scraper-Momo",
 
     content: [
       {
@@ -580,7 +580,7 @@ export const projects: ProjectData[] = [
       },
       {
         type: "paragraph",
-        text: "Momo is one of Taiwan's largest e-commerce platforms, but its aggressive anti-bot protections (CAPTCHAs, fingerprinting, rate limiting) make traditional scrapers completely ineffective. Researchers studying pricing patterns need reliable, repeatable data extraction.",
+        text: "HUEI YEH lists roughly 120 massage products on momoshop across four search-result pages. Prices swing daily during flash sales and promotional events — tracking them by hand is impossible, and existing price-tracking tools either miss this category or break whenever momo redeploys.",
       },
       {
         type: "heading",
@@ -588,78 +588,99 @@ export const projects: ProjectData[] = [
       },
       {
         type: "paragraph",
-        text: "Sole developer. I analyzed Momo's anti-bot mechanisms through traffic inspection, designed the evasion strategy, built the Python automation layer, and created the React monitoring dashboard.",
+        text: "Sole developer. I designed the scrape strategy around momo's Next.js payload, built the Flask dashboard, and shipped the whole pipeline as a one-command local app: pip install, playwright install, python app.py.",
       },
       {
         type: "bullets",
         label: "Key Solutions",
         items: [
-          "Human-behavior simulation: randomized scroll patterns, realistic mouse movements, variable click timing",
-          "Session rotation with cookie persistence to maintain login state across scraping runs",
-          "React-based real-time dashboard showing scrape progress, success rate, and data quality metrics",
-          "Structured export pipeline outputting clean CSV/JSON for downstream analysis",
+          "Headless Playwright scraper that survives layout changes by extracting the embedded __next_f.push([...]) JSON payload instead of CSS selectors",
+          "Auto-paginated crawl using the maxPage field from the same payload — no hardcoded page counts",
+          "SQLite layer with daily snapshots, 30-day delta calculation, and idempotent same-day re-run protection (with a Force re-scrape override)",
+          "Pure-SVG chart rendering on the frontend — both dashboard sparklines and the detail-view chart, no Chart.js dependency",
+          "Background scrape job with live status polling, scheduled trigger time (Taipei TZ), and a configurable history window (1-365 days)",
         ],
       },
       {
         type: "feature-grid",
         items: [
           {
-            title: "Anti-Detection System",
+            title: "Smart Scraper",
             description:
-              "Rotates user agents, manages cookies, and simulates human scroll/click patterns.",
+              "Parses momo's Next.js hydration payload directly. When momo restyles the page, the scraper keeps working.",
           },
           {
-            title: "Real-time Dashboard",
+            title: "Live Dashboard",
             description:
-              "React-based control panel showing scrape progress, data quality metrics, and export options.",
+              "Cards for every product: current price, percent change vs 30 days ago, and a 7-day inline SVG sparkline.",
+          },
+          {
+            title: "Detail View",
+            description:
+              "Click any product for the full chart with 7/14/30/90-day range selector and a day-by-day price table.",
           },
         ],
       },
       {
         type: "callout",
         variant: "warning",
-        title: "Challenge: Fingerprint-Based Bot Detection",
-        text: "Momo uses canvas fingerprinting and WebGL rendering checks. Even with stealth plugins, the scraper was flagged within 20 requests.",
+        title: "Challenge: momo Migrated to Next.js",
+        text: "momo's search results are now React-rendered. Selector-based scraping returned empty containers — the DOM is built client-side, after a hydration step that doesn't run in a plain HTTP fetch.",
       },
       {
         type: "callout",
         variant: "success",
         title: "Resolution",
-        text: "Launched Playwright in headed mode with a real Chrome user-data-dir pre-warmed with browsing history. Added randomized viewport sizes, timezone spoofing, and WebGL parameter randomization. Combined with Poisson-distributed delays averaging 3 seconds. Detection rate dropped from 95% to under 2%.",
+        text: "Instead of waiting for hydration, I parse the __next_f.push([...]) chunks Next.js streams to the client. The full product list lives there as JSON, including the maxPage field — so pagination is auto-detected and the scraper never breaks on a redesign.",
+      },
+      {
+        type: "stats",
+        items: [
+          { value: "~120", label: "Products tracked daily" },
+          { value: "~30s", label: "Full scrape across 4 pages" },
+          { value: "365d", label: "Configurable price history" },
+        ],
+      },
+      {
+        type: "callout",
+        variant: "accent",
+        title: "Built for the Long Haul",
+        text: "Schedule python scraper.py via cron or Task Scheduler and the web app reads from the same SQLite file. CJK fonts (PingFang / JhengHei / Noto CJK) are detected for clean Chinese product-name rendering.",
       },
     ],
 
     screenshots: [
       {
-        src: "/images/project/momo-scraper/1.png",
-        alt: "Momo scraper dashboard with real-time progress indicators and data quality metrics",
-        caption: "Dashboard — Real-time scrape monitoring with success rate",
+        src: "/images/project/web-momo/1.jpg",
+        alt: "Dashboard showing massage product cards with current price, percent change, and 7-day sparklines",
+        caption: "Dashboard — Every tracked product with sparkline and 30-day delta",
       },
       {
-        src: "/images/project/momo-scraper/2.png",
-        alt: "Extracted product data table with pricing history and category tags",
-        caption: "Data view — Extracted product catalog with pricing",
+        src: "/images/project/web-momo/2.jpg",
+        alt: "Scraper configuration panel with daily scrape time and history window settings, plus a manual trigger",
+        caption: "Settings — Schedule the daily scrape and configure history window",
       },
       {
-        src: "/images/project/momo-scraper/3.png",
-        alt: "Scraper configuration panel with anti-detection settings",
-        caption: "Configuration — Anti-detection tuning parameters",
+        src: "/images/project/web-momo/3.jpg",
+        alt: "Product detail page with SVG price chart, range selector, and day-by-day price history table",
+        caption: "Detail — Inline SVG chart with 7/14/30/90 range and daily history",
       },
     ],
 
     skills: [
-      { name: "ReactJS", category: "Frontend", icon: "/images/skills/react.png" },
       { name: "Python", category: "Backend", icon: "/images/skills/python.png" },
+      { name: "JS", category: "Frontend", icon: "/images/skills/js.png" },
+      { name: "HTML", category: "Frontend", icon: "/images/skills/html.png" },
+      { name: "CSS", category: "Frontend", icon: "/images/skills/css.png" },
       { name: "GitHub", category: "Tools", icon: "/images/skills/github.png" },
-      { name: "VS Code", category: "Tools", icon: "/images/skills/vscode.png" },
     ],
 
     techStack: [
-      { name: "React 18", role: "Dashboard UI" },
-      { name: "Vite", role: "Dev/Build" },
-      { name: "Python", role: "Scraping Engine" },
-      { name: "Playwright", role: "Browser Automation" },
-      { name: "Tailwind CSS", role: "Styling" },
+      { name: "Flask", role: "Web Server / API" },
+      { name: "Playwright", role: "Headless Scraper" },
+      { name: "SQLite", role: "Daily Snapshots" },
+      { name: "Inline SVG", role: "Charts & Sparklines" },
+      { name: "Jinja2", role: "Templates" },
     ],
   },
 
@@ -787,17 +808,18 @@ export const projects: ProjectData[] = [
     ],
   },
 
-  // ── 7. E-Book Rental ────────────────────────────
+  // ── 7. Ads Generator ────────────────────────────
   {
-    id: "ebook-rental",
-    title: "E-Book Rental System",
-    subtitle: "Digital Library Manager",
+    id: "ads-generator",
+    title: "Timed Context Engine",
+    subtitle: "AI Video → 30-Second Ad Script Generator",
     description:
-      "A full-stack CRUD application utilizing a React frontend and a Django REST framework backend to manage digital library collections.",
-    category: "FULLSTACK",
-    tags: ["Django", "React", "REST API"],
-    image: "/images/project/ebook/1.jfif",
+      "Paste a YouTube URL or upload an MP4 — Gemini watches the video, identifies the product, breaks down the hook and pain points, and assembles a complete 30-second ad script with timing, voiceover, and on-screen captions.",
+    category: "AI / CONTENT",
+    tags: ["Express", "Gemini AI", "yt-dlp"],
+    image: "/images/project/ad-generator/1.jpg",
     size: "small",
+    githubUrl: "https://github.com/kathleenchenn/Ads-Generator",
 
     content: [
       {
@@ -806,7 +828,7 @@ export const projects: ProjectData[] = [
       },
       {
         type: "paragraph",
-        text: "Chang Gung University's library had no digital system for e-book lending. Students had to physically visit the library to check availability, and librarians tracked rentals in spreadsheets—leading to lost records and overdue books going unnoticed.",
+        text: "Crafting a 30-second product ad script means watching reference videos, isolating the hook, mapping the pain point, sketching shot lists, and writing voiceover with cap-tight timing. The work is creative — but the analytical pre-work is mostly mechanical, and a senior creative will burn hours on it before the first line of script gets written.",
       },
       {
         type: "heading",
@@ -814,69 +836,105 @@ export const projects: ProjectData[] = [
       },
       {
         type: "paragraph",
-        text: "Full-stack developer. I designed the database schema, built the Django REST API with role-based permissions, created the React admin dashboard and student-facing rental interface, and deployed on the university's internal server.",
+        text: "Sole developer. I designed the prompt architecture around Gemini's File API for true multimodal video analysis (not just transcripts), built the Express backend, the single-page UI, and configured the serverless Vercel deployment with extended limits to handle real video uploads.",
       },
       {
         type: "bullets",
         label: "Key Solutions",
         items: [
-          "Django REST framework API with token-based authentication and granular role permissions",
-          "React admin dashboard with real-time inventory tracking, overdue alerts, and usage analytics",
-          "Automated rental period management with email notifications for approaching due dates",
-          "Full-text search across title, author, ISBN, and category with debounced live results",
+          "yt-dlp pipeline that ingests any YouTube URL or accepts a direct MP4 upload — auto-downloads the binary on Linux/Vercel",
+          "Multimodal analysis using the Google Gemini File API: the actual video is uploaded, not just an extracted transcript, so the model reasons about visuals + audio together",
+          "Structured creative breakdown: hook detection, pain-point identification, and a marketing-strategy summary derived directly from the source footage",
+          "10/10/10 brainstorm: 10 alternative hooks, 10 pains, and 10 product-display angles — pick one of each and the engine assembles the final 30s script",
+          "Production-ready output: a timestamped script table with visual direction, voiceover lines, and on-screen caption design",
         ],
       },
       {
         type: "feature-grid",
         items: [
           {
-            title: "Book Management",
+            title: "Zero-Input Generation",
             description:
-              "Full CRUD operations for the library catalog with search, filtering, and category management.",
+              "One paste of a video URL produces a fully analyzed creative brief and an editable ad script — no manual prompting required.",
           },
           {
-            title: "Rental Tracking",
+            title: "10 / 10 / 10 Menu",
             description:
-              "Automated rental period management, overdue notifications, and return processing.",
+              "Mix-and-match interactive selector. Toggle a hook, a pain, and a display style — the assembler stitches them into a coherent script.",
           },
           {
-            title: "User Permissions",
+            title: "Director-Ready Script",
             description:
-              "Role-based access control: admin, librarian, and student roles with different capabilities.",
+              "Structured beat sheet with second-by-second timing, shot description, voiceover copy, and caption design across the full 30 seconds.",
           },
         ],
       },
       {
         type: "callout",
         variant: "warning",
-        title: "Challenge: Role-Based Access Without Over-Engineering",
-        text: "Django's built-in Group/Permission/ContentType model was overkill for 3 roles and made the admin interface confusing for librarians.",
+        title: "Challenge: Serverless + Heavy Video Files",
+        text: "Vercel functions historically cap at short timeouts and small payloads — but real reference videos can be hundreds of MB and Gemini needs the full file uploaded before it can analyze.",
       },
       {
         type: "callout",
         variant: "success",
         title: "Resolution",
-        text: "Built a lightweight custom permission layer using a single 'role' field and a decorator-based access control. Each endpoint uses @requires_role('librarian'). On the frontend, a usePermissions() hook reads the role from JWT and conditionally renders UI.",
+        text: "Configured vercel.json with 300-second timeouts and 1 GB memory on the analysis function, then streamed uploads directly through the Gemini File API instead of buffering in memory. The pipeline is resilient enough to handle full YouTube downloads on the platform without falling back to a separate worker.",
+      },
+      {
+        type: "stats",
+        items: [
+          { value: "1", label: "Paste-and-go input" },
+          { value: "30s", label: "Final ad script" },
+          { value: "300s", label: "Vercel timeout headroom" },
+        ],
+      },
+      {
+        type: "callout",
+        variant: "accent",
+        title: "Why the File API Matters",
+        text: "Most AI video tools work on transcripts alone — they miss the cut, the on-screen text, the product close-up. By uploading the actual video to Gemini 2.5 Flash, the engine reasons about visual storytelling the way a creative director does.",
       },
     ],
 
     screenshots: [
+      {
+        src: "/images/project/ad-generator/1.jpg",
+        alt: "Zero-input ad generator with URL/MP4 toggle, paste field, and live processing pipeline status",
+        caption: "Input — Paste a YouTube URL or drop an MP4 and watch the pipeline run",
+      },
+      {
+        src: "/images/project/ad-generator/2.jpg",
+        alt: "Creative breakdown showing identified video hook and marketing strategy summary",
+        caption: "Analysis — Hook detection and marketing-strategy breakdown",
+      },
+      {
+        src: "/images/project/ad-generator/3.jpg",
+        alt: "10/10/10 selector menu listing alternative hooks, pains, and display options for the user to choose",
+        caption: "10 / 10 / 10 — Pick a hook, a pain point, a display angle",
+      },
+      {
+        src: "/images/project/ad-generator/4.jpg",
+        alt: "Final 30-second script in a timed table with visual, voiceover, and caption columns",
+        caption: "Script — Director-ready 30-second beat sheet",
+      },
     ],
 
     skills: [
-      { name: "ReactJS", category: "Frontend", icon: "/images/skills/react.png" },
       { name: "JS", category: "Frontend", icon: "/images/skills/js.png" },
+      { name: "HTML", category: "Frontend", icon: "/images/skills/html.png" },
       { name: "CSS", category: "Frontend", icon: "/images/skills/css.png" },
-      { name: "Django", category: "Backend", icon: "/images/skills/django.png" },
-      { name: "MySQL", category: "Backend", icon: "/images/skills/mysql.png" },
+      { name: "NodeJS", category: "Backend", icon: "/images/skills/nodejs.png" },
+      { name: "Vercel", category: "Tools", icon: "/images/skills/vercel.png" },
       { name: "GitHub", category: "Tools", icon: "/images/skills/github.png" },
     ],
 
     techStack: [
-      { name: "Django", role: "Backend/API" },
-      { name: "Django REST", role: "API Framework" },
-      { name: "React", role: "Frontend" },
-      { name: "SQLite", role: "Database" },
+      { name: "Express 5", role: "Backend / API" },
+      { name: "Gemini 2.5 Flash", role: "Multimodal AI" },
+      { name: "yt-dlp", role: "Video Ingest" },
+      { name: "Vanilla HTML / JS", role: "Single-page UI" },
+      { name: "Vercel", role: "Serverless Deploy" },
     ],
   },
 ];
